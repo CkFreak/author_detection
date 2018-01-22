@@ -1,0 +1,8 @@
+Every test file belongs exactly to one user.
+
+The train files contain the user names, thes test files don't.
+Reconstruct the mapping from test to train file.
+
+All data licensed under CC-by-SA 3.0 DE from the respective authors.
+
+Data provided by http://gamersglobal.de -- thanks alot!
