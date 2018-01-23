@@ -5,7 +5,7 @@ class Tester:
 
     def give_accuracy(self, matrix, chain):
         total_probability = 0
-        for char in range (0, len(chain) - 1):
-            if chain[char] in matrix and chain[char + 1] in matrix[chain[char]]:
-                total_probability += matrix[chain[char]][chain[char + 1]]
+        for word in range (0, len(chain) - 1):
+            if chain[word] in matrix and chain[word + 1] in matrix[chain[word]]:
+                total_probability += matrix[chain[word]][chain[word + 1]]
         return total_probability
