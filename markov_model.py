@@ -4,8 +4,6 @@ class MarkovModel:
         self.transition_matrix = {}
         self.create_transition_matrix(chain)
 
-
-
     def create_transition_matrix(self, chain):
         previous_char = chain[0]
         for char in range(1, len(chain)):
