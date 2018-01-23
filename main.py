@@ -35,7 +35,7 @@ for i in onlyfiles_test:
 for chain in range(0, len(testfilez)):
     max_accuracy = 0
     best_index = None
-    for matrix in range (0, len(trainikc_transition_matrix)):
+    for matrix in range(0, len(trainikc_transition_matrix)):
         tester = Tester(trainikc_transition_matrix[matrix], testfilez[chain].split())
         if tester.accuracy > max_accuracy:
             max_accuracy = tester.accuracy
