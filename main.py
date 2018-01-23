@@ -20,7 +20,7 @@ for i in onlyfiles:
 trainikc_transition_matrix = []
 
 for chain in chainz_list:
-    trainikc_transition_matrix.append(MarkovModel(chain).transition_matrix)
+    trainikc_transition_matrix.append(MarkovModel(chain.split()).transition_matrix)
 
 testfilez = []
 onlyfiles_test = [f for f in listdir("author_attribution/testikc/") if isfile(join("author_attribution/testikc/", f))]
