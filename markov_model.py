@@ -5,19 +5,19 @@ class MarkovModel:
         self.create_transition_matrix(chain)
 
     def create_transition_matrix(self, chain):
-        previous_char = chain[0]
-        for char in range(1, len(chain)):
-            if previous_char not in self.transition_matrix:
-                self.transition_matrix[previous_char] = {}
-                self.transition_matrix[previous_char][chain[char]] = 0
-            if chain[char] not in self.transition_matrix[previous_char]:
-                self.transition_matrix[previous_char][chain[char]] = 0
-            self.transition_matrix[previous_char][chain[char]] += 1
-            previous_char = chain[char]
+        previous_word = chain[0]
+        for word in range(1, len(chain)):
+            if previous_word not in self.transition_matrix:
+                self.transition_matrix[previous_word] = {}
+                self.transition_matrix[previous_word][chain[word]] = 0
+            if chain[word] not in self.transition_matrix[previous_word]:
+                self.transition_matrix[previous_word][chain[word]] = 0
+            self.transition_matrix[previous_word][chain[word]] += 1
+            previous_word = chain[word]
 
-        for letter in self.transition_matrix:
+        for word in self.transition_matrix:
             total = 0
-            for sub_letter in self.transition_matrix[letter]:
-                total += self.transition_matrix[letter][sub_letter]
-            for sub_letter in self.transition_matrix[letter]:
-                self.transition_matrix[letter][sub_letter] /= total
+            for sub_word in self.transition_matrix[word]:
+                total += self.transition_matrix[word][sub_word]
+            for sub_word in self.transition_matrix[word]:
+                self.transition_matrix[word][sub_word] /= total
