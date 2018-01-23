@@ -3,8 +3,11 @@ import string
 
 class FileReader:
 
-    def __init__(self, file_content):
+    def __init__(self, file_content, create_validation_set):
         self.chain = self.filter(file_content)
+        if create_validation_set:
+            self.training_chain, self.validation_chain = self.split_training_validation(self.chain)
+
 
     def filter(self, file_content):
         return_content = self.remove_punctuation(file_content)
@@ -22,4 +25,10 @@ class FileReader:
 
     def remove_extra_spaces(self, file_content):
         return " ".join(file_content.split())
+
+    def split_training_validation(self, return_content):
+        train_size = int(len(return_content) * 0.8)
+        training_chain = return_content[:train_size]
+        validation_chain = return_content[train_size:]
+        return training_chain, validation_chain
 
