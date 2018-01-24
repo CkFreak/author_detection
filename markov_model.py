@@ -1,9 +1,15 @@
 class MarkovModel:
 
+    # Initializes this class.
+    # after this is done self.transition_matrix will hold the transition matrix for the given chain
     def __init__(self, chain):
         self.transition_matrix = {}
         self.create_transition_matrix(chain)
 
+    # Creates a transition matrix using an array as input.
+    # Every word is a key in the matrix for later.
+    # Every key holds a dictionary that holds as keys words that followed the first word
+    # and as value the probability that this word will actually follow.
     def create_transition_matrix(self, chain):
         previous_word = chain[0]
         for word in range(1, len(chain)):
