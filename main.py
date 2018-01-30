@@ -67,18 +67,22 @@ def predict_text_by_comment(text_list, true_name, training_files, verbose, valid
 
 # Tries to guess which author wrote which text.
 # Evaluated are the training matrices against the test texts
-#def predict_text(texts, test_name, training_name):
-#    for chain in range(0, len(texts)):
-#        max_accuracy = 0
-#        best_index = None
-#        for matrix in range(0, len(training_transition_matrix)):
-#            tester = Tester(training_transition_matrix[matrix], texts[chain].split())
-#            if tester.accuracy > max_accuracy:
-#                max_accuracy = tester.accuracy
-#                best_index = matrix
-#        print("Most Probable Author for Text", test_name[chain], "is", training_name[best_index], ".")
+def predict_text(texts, test_name, training_name):
+    for chain in range(0, len(texts)):
+        max_accuracy = 0
+        best_index = None
+        for matrix in range(0, len(training_transition_matrix)):
+            tester = Tester(training_transition_matrix[matrix], texts[chain].split())
+            if tester.accuracy > max_accuracy:
+                max_accuracy = tester.accuracy
+                best_index = matrix
+        print("Most Probable Author for Text", test_name[chain], "is", training_name[best_index], ".")
 
-
+def join_test_chain_list(test_chain_list):
+    new_list = []
+    for i in range (0, len(test_chain_list)):
+        new_list.append(" ".join(test_chain_list[i]))
+    return new_list
 
 onlyfiles = [f for f in listdir("author_attribution/trainikc/") if isfile(join("author_attribution/trainikc/", f))]
 onlyfiles_test = [f for f in listdir("author_attribution/testikc/") if isfile(join("author_attribution/testikc/", f))]
@@ -113,7 +117,8 @@ while not input_correct:
     tokens = input("Please enter the number of tokens that you want to test:")
     tokens = int(tokens)
     input = input("If you want to see the validation set (80/20) accuracy, enter 'v'.\n"
-                  "If you want to see the attribution of the test set by Text, press 't'.")
+                  "If you want to see the attribution of the test set by Text, press 't'.\n
+                  "If you want to see the attribution of an author for each test text, press 'o'")
 
     if (input == 'v'):
         input_correct = True
@@ -121,6 +126,9 @@ while not input_correct:
     elif (input == 'p'):
         input_correct = True
         predict_all_texts(test_chain_list, onlyfiles_test, onlyfiles, verbose=False, validation=False, tokens)
+    elif (input == 'o'):
+        input_correct = True
+        predict_text(join_test_chain_list(test_chain_list), onlyfiles_test, onlyfiles)
     else:
         input ("Input not correct. Please try again.")
 
