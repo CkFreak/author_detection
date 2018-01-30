@@ -32,19 +32,21 @@ def read_test_files():
             test_chain_list.append(file_reader.chains)
 
 
-def predict_all_texts(all_texts, true_names, training_files, verbose, validation):
+def predict_all_texts(all_texts, true_names, training_files, verbose, validation, num_of_tokens_per_text):
     if validation:
         average_accuracy = 0
         for i in range (0, len(all_texts)):
-            average_accuracy += predict_text_by_comment(all_texts[i], true_names[i], training_files, verbose, validation)
-        print(average_accuracy / len(all_texts))
+            average_accuracy += predict_text_by_comment(all_texts[i], true_names[i], training_files, verbose, validation, num_of_tokens_per_text)
+        print("Accuracy for Validation Set with ", num_of_tokens_per_text, "tokens per text: ", average_accuracy / len(all_texts), "%.")
     else:
         for i in range (0, len(all_texts)):
-            predict_text_by_comment(all_texts[i], None, training_files, True, validation)
+            average_acuracy += predict_text_by_comment(all_texts[i], test_author_information[true_names[i]], training_files, verbose, validation, num_of_tokens_per_text)
+        print("Accuracy for Test Set with ", num_of_tokens_per_text, "tokens per text: ", average_accuracy / len(all_texts), "%.")
 
-def predict_text_by_comment(text_list, true_name, training_files, verbose, validation):
+#TODO: Test
+def predict_text_by_comment(text_list, true_name, training_files, verbose, validation, num_of_tokens_per_text):
     total_accuracy = 0
-    for comment in range (0, len(text_list)):
+    for comment in range (0, num_of_tokens_per_text):
         max_accuracy = 0
         best_index = 0
         for matrix in range (0, len(training_transition_matrix)):
@@ -52,30 +54,29 @@ def predict_text_by_comment(text_list, true_name, training_files, verbose, valid
             if tester.accuracy > max_accuracy:
                 max_accuracy = tester.accuracy
                 best_index = matrix
-        if validation:
-            if verbose:
-                print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ", max_accuracy, "% accuracy, but true author is", true_name)
-            if (training_files[best_index] == true_name):
+            if verbose: 
+                if validation:
+                    print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ", max_accuracy, "% accuracy, but true author is", true_name)
+                else: 
+                    print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ",
+                          max_accuracy, "% accuracy")
+        if (training_files[best_index] == true_name):
                 total_accuracy += 1
-        else :
-            if verbose:
-                print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ",
-                      max_accuracy, "% accuracy")
 
     return (total_accuracy / len(text_list))
 
 # Tries to guess which author wrote which text.
 # Evaluated are the training matrices against the test texts
-def predict_text(texts, test_name, training_name):
-    for chain in range(0, len(texts)):
-        max_accuracy = 0
-        best_index = None
-        for matrix in range(0, len(training_transition_matrix)):
-            tester = Tester(training_transition_matrix[matrix], texts[chain].split())
-            if tester.accuracy > max_accuracy:
-                max_accuracy = tester.accuracy
-                best_index = matrix
-        print("Most Probable Author for Text", test_name[chain], "is", training_name[best_index], ".")
+#def predict_text(texts, test_name, training_name):
+#    for chain in range(0, len(texts)):
+#        max_accuracy = 0
+#        best_index = None
+#        for matrix in range(0, len(training_transition_matrix)):
+#            tester = Tester(training_transition_matrix[matrix], texts[chain].split())
+#            if tester.accuracy > max_accuracy:
+#                max_accuracy = tester.accuracy
+#                best_index = matrix
+#        print("Most Probable Author for Text", test_name[chain], "is", training_name[best_index], ".")
 
 
 
@@ -89,6 +90,16 @@ validation_chain_list = []
 training_transition_matrix = []
 test_chain_list = []
 
+#The true files for the test, in order to measure accuracy on the test set
+test_author_information = {'McSpain.txt': 'test_b', 'Thomas_Barth.txt': 'test_v', 'Pro4you.txt': 'test_x',
+'ChuckBROOZeG.txt': 'test_q', 'Slaytanic.txt': 'test_w', 'Hendrik_-ZG-.txt': 'test_m',
+'Vidar.txt': 'test_i', 'Larnak.txt': 'test_z', 'Sven_Gellersen.txt': 'test_h',
+'Freylis.txt': 'test_a', 'Darth_Spengler.txt': 'test_t', 'Green_Yoshi.txt': 'test_u',
+'maddccat.txt': 'test_d', 'Sp00kyFox.txt': 'test_e', 'Toxe.txt': 'test_k',
+'Noodles.txt': 'test_n', 'floppi.txt': 'test_y', 'Ganon.txt': 'test_o',
+'Dennis_Ziesecke.txt': 'test_p', 'Spiritogre.txt': 'test_l'}
+test_author_information = inv_map = {v: k for k, v in test_author_information.items()}
+
 
 # Performing preprocessing
 read_training_files()
@@ -99,18 +110,21 @@ read_test_files()
 #The input block to choose between validation and testing mode.
 input_correct = False
 while not input_correct:
-    input = input("If you want to see the validation set accuracy, enter 'v'.\n"
-                  "If you want to see the assigned text for every single comment of every text, press 't'.")
+    tokens = input("Please enter the number of tokens that you want to test:")
+    tokens = int(tokens)
+    input = input("If you want to see the validation set (80/20) accuracy, enter 'v'.\n"
+                  "If you want to see the attribution of the test set by Text, press 't'.")
 
     if (input == 'v'):
         input_correct = True
-        predict_all_texts(validation_chain_list, onlyfiles, onlyfiles, verbose=False, validation = True)
+        predict_all_texts(validation_chain_list, onlyfiles, onlyfiles, verbose=False, validation = True, tokens)
     elif (input == 'p'):
         input_correct = True
-        predict_all_texts(test_chain_list, None, onlyfiles, verbose=True, validation=False)
+        predict_all_texts(test_chain_list, onlyfiles_test, onlyfiles, verbose=False, validation=False, tokens)
     else:
         input ("Input not correct. Please try again.")
 
+#TODO: Implement a print for the test files.
 
 
 

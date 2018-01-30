@@ -42,7 +42,7 @@ class FileReader:
 
     # Splits the content of the file into two part representing 80% and 20% of the original content
     def split_training_validation(self, return_content):
-        train_size = int(len(return_content) * 0.99)
+        train_size = int(len(return_content) * 0.8)
         training_chain = return_content[:train_size]
         validation_chain = return_content[train_size:]
         return training_chain, validation_chain
