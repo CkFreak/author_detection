@@ -31,21 +31,23 @@ def read_test_files():
             file_reader = FileReader(file_content, create_validation_set= False)
             test_chain_list.append(file_reader.chains)
 
-
+# Predicts all texts by comment or not by comment.
 def predict_all_texts(all_texts, true_names, training_files, verbose, validation, num_of_tokens_per_text):
+    average_accuracy = 0
     if validation:
-        average_accuracy = 0
         for i in range (0, len(all_texts)):
             average_accuracy += predict_text_by_comment(all_texts[i], true_names[i], training_files, verbose, validation, num_of_tokens_per_text)
         print("Accuracy for Validation Set with ", num_of_tokens_per_text, "tokens per text: ", average_accuracy / len(all_texts), "%.")
     else:
         for i in range (0, len(all_texts)):
-            average_acuracy += predict_text_by_comment(all_texts[i], test_author_information[true_names[i]], training_files, verbose, validation, num_of_tokens_per_text)
+            average_accuracy += predict_text_by_comment(all_texts[i], test_author_information[true_names[i]], training_files, verbose, validation, num_of_tokens_per_text)
         print("Accuracy for Test Set with ", num_of_tokens_per_text, "tokens per text: ", average_accuracy / len(all_texts), "%.")
 
-#TODO: Test
+#Predicts the author by comment, returns the total success rate
 def predict_text_by_comment(text_list, true_name, training_files, verbose, validation, num_of_tokens_per_text):
     total_accuracy = 0
+    if num_of_tokens_per_text == 0:
+        num_of_tokens_per_text = len(text_list)
     for comment in range (0, num_of_tokens_per_text):
         max_accuracy = 0
         best_index = 0
@@ -54,14 +56,14 @@ def predict_text_by_comment(text_list, true_name, training_files, verbose, valid
             if tester.accuracy > max_accuracy:
                 max_accuracy = tester.accuracy
                 best_index = matrix
-            if verbose: 
+            if verbose:
                 if validation:
                     print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ", max_accuracy, "% accuracy, but true author is", true_name)
-                else: 
+                else:
                     print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index], "with ",
                           max_accuracy, "% accuracy")
-        if (training_files[best_index] == true_name):
-                total_accuracy += 1
+        if (training_files[best_index] == ("train_" + true_name)):
+            total_accuracy += 1
 
     return (total_accuracy / len(text_list))
 
@@ -114,25 +116,24 @@ read_test_files()
 #The input block to choose between validation and testing mode.
 input_correct = False
 while not input_correct:
-    tokens = input("Please enter the number of tokens that you want to test:")
+    tokens = input("Please enter the number of tokens that you want to test (0 if you want all):")
     tokens = int(tokens)
     input = input("If you want to see the validation set (80/20) accuracy, enter 'v'.\n"
-                  "If you want to see the attribution of the test set by Text, press 't'.\n
+                  "If you want to see the attribution of the test set by Text, press 't'.\n"
                   "If you want to see the attribution of an author for each test text, press 'o'")
 
     if (input == 'v'):
         input_correct = True
-        predict_all_texts(validation_chain_list, onlyfiles, onlyfiles, verbose=False, validation = True, tokens)
-    elif (input == 'p'):
+        predict_all_texts(validation_chain_list, onlyfiles, onlyfiles, verbose=False, validation = True, num_of_tokens_per_text=tokens)
+    elif (input == 't'):
         input_correct = True
-        predict_all_texts(test_chain_list, onlyfiles_test, onlyfiles, verbose=False, validation=False, tokens)
+        predict_all_texts(test_chain_list, onlyfiles_test, onlyfiles, verbose=False, validation=False, num_of_tokens_per_text=tokens)
     elif (input == 'o'):
         input_correct = True
         predict_text(join_test_chain_list(test_chain_list), onlyfiles_test, onlyfiles)
     else:
         input ("Input not correct. Please try again.")
 
-#TODO: Implement a print for the test files.
 
 
 
