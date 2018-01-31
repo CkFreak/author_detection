@@ -70,8 +70,12 @@ def predict_text_by_comment(text_list, true_name, training_files, verbose, valid
                     print("Most probable Author for Comment", text_list[comment], "is", training_files[best_index],
                           "with ",
                           max_accuracy, "% accuracy")
-        if training_files[best_index] == "train_" + true_name:
-            total_accuracy += 1
+        if validation:
+            if training_files[best_index] == true_name:
+                total_accuracy += 1
+        else:
+            if training_files[best_index] == "train_" + true_name:
+                total_accuracy += 1
 
     return total_accuracy / len(text_list)
 
